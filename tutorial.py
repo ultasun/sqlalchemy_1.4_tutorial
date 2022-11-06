@@ -79,7 +79,8 @@ with engine.connect() as conn:
         [{"x": 11, "y": 12}, {"x": 13, "y": 14}],
         )
     conn.commit()
-
+    
+# -----------------------------------------------------------------------------
 # executing with an ORM session
 from sqlalchemy.orm import Session
 
