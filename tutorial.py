@@ -259,3 +259,44 @@ session.execute(
 ).all()
 
 # selecting from labeled SQL expressions
+from sqlalchemy import func, cast
+stmt = select(
+    ("username: " + user_table.c.name).label("username"),
+    ).order_by(user_table.c.name)
+with engine.connect() as conn:
+    for row in conn.execute(stmt):
+        print(f"{row.username}")
+
+# selecting with textual column expressions
+from sqlalchemy import text
+stmt = select(text("'some phrase'"), user_table.c.name).order_by(user_table.c.name)
+with engine.connect() as conn:
+    print(conn.execute(stmt).all())
+
+from sqlalchemy import literal_column
+stmt = select(literal_column("'some phrase'").label("p"),
+              user_table.c.name).order_by(user_table.c.name)
+with engine.connect() as conn:
+    for row in conn.execute(stmt):
+        print(f"{row.p}, {row.name}")
+
+# the where clause
+print(user_table.c.name == "squidward")
+
+print(address_table.c.user_id > 10)
+
+print(select(user_table).where(user_table.c.name == "squidward"))
+
+print(
+    select(address_table.c.email_address)
+    .where(user_table.c.name == "squidward")
+    .where(address_table.c.user_id == user_table.c.id)
+)
+
+print(
+    select(address_table.c.email_address).where(
+        user_table.c.name == "squidward",
+        address_table.c.user_id == user_table.c.id
+    )
+)
+
