@@ -366,3 +366,43 @@ print(
 # SQL also has a 'RIGHT OUTER JOIN' but SQLAlchemy doesn't render this directly,
 # instead, reverse the order of the tables and use 'LEFT OUTER JOIN'
 
+# ORDER BY, GROUP BY, HAVING
+
+# ORDER BY
+print(select(user_table).order_by(user_table.c.name))
+
+# ascending / descending is available from ColumnElement.asc() and
+# ColumnElement.desc()
+print(select(User).order_by(User.fullname.desc()))
+
+# Aggregate functions with GROUP BY / HAVING
+from sqlalchemy import func
+count_fn = func.count(user_table.c.id)
+print(count_fn)
+
+with engine.connect() as conn:
+    result = conn.execute(
+        select(User.name, func.count(Address.id).label("count"))
+        .join(Address)
+        .group_by(User.name)
+        .having(func.count(Address.id) > 1)
+    )
+    print(result.all())
+
+# ordering or grouping by a label
+from sqlalchemy import func, desc
+stmt = (
+    select(Address.user_id, func.count(Address.id).label("num_addresses"))
+    .group_by("user_id")
+    .order_by("user_id", desc("num_addresses"))
+)
+print(stmt)
+
+# using aliases
+user_alias_1 = user_table.alias()
+user_alias_2 = user_table.alias()
+print(
+    select(user_alias_1.c.name, user_alias_2.c.name).join_from(
+        user_alias_1, user_alias_2, user_alias_1.c.id > user_alias_2.c.id
+    )
+)
