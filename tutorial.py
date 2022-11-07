@@ -176,3 +176,47 @@ Base.metadata.create_all(engine)
 some_table = Table("some_table", metadata_obj, autoload_with=engine)
 
 # -----------------------------------------------------------------------------
+# working with data
+# https://web.archive.org/web/20220815143402/https://docs.sqlalchemy.org/en/14/tutorial/data.html
+
+# inserting rows with core
+
+# the insert() sql expression construct
+from sqlalchemy import insert, select
+stmt = insert(user_table).values(name='spongebob', fullname="Spongebob Squarepants")
+print(stmt)
+compiled = stmt.compile()
+
+with engine.connect() as conn:
+    result = conn.execute(stmt)
+    conn.commit()
+
+# insert usually generates the "values" clause automatically
+with engine.connect() as conn:
+    result = conn.execute(
+        insert(user_table),
+        [
+            {"name": "sandy", "fullname": "Sandy Cheeks"},
+            {"name": "patrick", "fullname": "Patrick Star"}
+        ]
+    )
+    conn.commit()
+
+# ... skipping the 'Deep Alchemy' section
+
+# insert ... from select
+select_stmt = select(user_table.c.id, user_table.c.name + "@aol.com")
+insert_stmt = insert(address_table).from_select(
+    ["user_id", "email_address"], select_stmt)
+print(insert_stmt)
+
+
+# insert ... returning
+insert_stmt = insert(address_table).returning(address_table.c.id, address_table.c.email_address)
+print(insert_stmt)
+
+select_stmt = select(user_table.c.id, user_table.c.name + "@aol.com")
+insert_stmt = insert(address_table).from_select(
+    ["user_id", "email_address"], select_stmt
+    )
+print(insert_stmt.returning(address_table.c.id, address_table.c.email_address))
