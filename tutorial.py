@@ -418,3 +418,14 @@ print(
     .join_from(User, address_alias_2)
     .where(address_alias_2.email_address == "patrick@gmail.com")
 )
+
+# subqueries and CTEs
+subq = (
+    select(func.count(address_table.c.id).label("count"), address_table.c.user_id)
+    .group_by(address_table.c.user_id)
+    .subquery()
+)
+print(subq)
+print(select(subq.c.user_id, subq.c.count))
+stmt = select(user_table.c.name, user_table.c.fullname, subq.c.count).join_from(user_table, subq)
+print(stmt)
