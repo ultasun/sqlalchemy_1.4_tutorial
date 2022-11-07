@@ -3,7 +3,7 @@ This is the code from the [*SQLAlchemy Quick Start*](https://docs.sqlalchemy.org
 
 # Docker
 To get this up and running using *Docker*
-1. `$ docker run -d -v /src:/path/to/this/git/repo -t python:bullseye`
+1. `$ docker run -d -v /path/to/this/git/repo:/src -t python:bullseye`
 2. `$ docker exec -it <container_name> /bin/bash`
 3. `# apt-get update && apt-get -y upgrade`
 4. `# pip install pip`
