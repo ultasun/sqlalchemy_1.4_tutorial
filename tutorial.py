@@ -300,3 +300,14 @@ print(
     )
 )
 
+# "and" and "or" conjunctions are both available directly using and_() and or_()
+# functions, illustrated below in terms of ORM entities:
+from sqlalchemy import and_, or_
+print(
+    select(Address.email_address).where(
+        and_(
+            or_(User.name == "squidward", User.name == "sandy"),
+            Address.user_id == User.id,
+        )
+    )
+)
