@@ -406,3 +406,15 @@ print(
         user_alias_1, user_alias_2, user_alias_1.c.id > user_alias_2.c.id
     )
 )
+
+# ORM entity aliases
+from sqlalchemy.orm import aliased
+address_alias_1 = aliased(Address)
+address_alias_2 = aliased(Address)
+print(
+    select(User)
+    .join_from(User, address_alias_1)
+    .where(address_alias_1.email_address == "patrick@aol.com")
+    .join_from(User, address_alias_2)
+    .where(address_alias_2.email_address == "patrick@gmail.com")
+)
