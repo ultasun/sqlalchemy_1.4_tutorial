@@ -346,3 +346,23 @@ print(
 # known as `sqlalchemy.sql.expression.func` to produce the SQL COUNT() function
 from sqlalchemy import func
 print(select(func.count("*")).select_from(user_table))
+
+# setting the ON clause
+print(
+    select(address_table.c.email_address)
+    .select_from(user_table)
+    .join(address_table, user_table.c.id == address_table.c.user_id)
+)
+
+# OUTER and FULL join
+print(
+    select(user_table).join(address_table, isouter=True)
+)
+
+print(
+    select(user_table).join(address_table, full=True)
+)
+
+# SQL also has a 'RIGHT OUTER JOIN' but SQLAlchemy doesn't render this directly,
+# instead, reverse the order of the tables and use 'LEFT OUTER JOIN'
+
