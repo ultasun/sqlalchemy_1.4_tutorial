@@ -210,7 +210,6 @@ insert_stmt = insert(address_table).from_select(
     ["user_id", "email_address"], select_stmt)
 print(insert_stmt)
 
-
 # insert ... returning
 insert_stmt = insert(address_table).returning(address_table.c.id, address_table.c.email_address)
 print(insert_stmt)
@@ -220,3 +219,43 @@ insert_stmt = insert(address_table).from_select(
     ["user_id", "email_address"], select_stmt
     )
 print(insert_stmt.returning(address_table.c.id, address_table.c.email_address))
+
+# -----------------------------------------------------------------------------
+from sqlalchemy import select # this was imported previously
+stmt = select(user_table).where(user_table.c.name == "spongebob")
+print(stmt)
+
+with engine.connect() as conn:
+    for row in conn.execute(stmt):
+        print(row)
+
+stmt = select(User).where(User.name == "spongebob")
+with Session(engine) as session:
+    for row in session.execute(stmt):
+        print(row)
+
+# setting the COLUMNS and FROM clause
+print(select(user_table))
+
+print(select(user_table.c.name, user_table.c.fullname))
+
+# selecting orm entities and columns
+
+print(select(User))
+
+row = session.execute(select(User)).first()
+
+#row
+#row[0]
+
+user = session.scalars(select(User)).first()
+print(select(User.name, User.fullname))
+
+row = session.execute(select(User.name, User.fullname)).first()
+
+session.execute(
+    select(User.name, Address).where(User.id == Address.user_id).order_by(
+        Address.id)
+).all()
+
+# selecting from labeled SQL expressions
