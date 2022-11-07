@@ -311,3 +311,9 @@ print(
         )
     )
 )
+
+# filter_by()
+print(
+    select(User).filter_by(name="spongebob", fullname="Spongebob Squarepants")
+)
+
