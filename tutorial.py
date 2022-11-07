@@ -441,3 +441,27 @@ stmt = select(user_table.c.name, user_table.c.fullname, subq.c.count).join_from(
 )
 
 print(stmt)
+
+# ORM entity subqueries/CTEs
+subq = select(Address).where(~Address.email_address.like("%aol.com")).subquery()
+address_subq = aliased(Address, subq)
+stmt = (
+    select(User, address_subq)
+    .join_from(User, address_subq)
+    .order_by(User.id, address_subq.id)
+)
+with Session(engine) as session:
+    for user, address in session.execute(stmt):
+        print(f"{user} {address}")
+
+# same goal as above, using CTE to achieve
+cte_obj = select(Address).where(~Address.email_address.like("%aol.com")).cte()
+address_cte = aliased(Address, cte_obj)
+stmt = (
+    select(User, address_cte)
+    .join_from(User, address_cte)
+    .order_by(User.id, address_cte.id)
+)
+with Session(engine) as session:
+    for user, address in session.execute(stmt):
+        print(f"{user} {address}")
