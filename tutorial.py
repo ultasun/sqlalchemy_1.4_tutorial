@@ -317,3 +317,32 @@ print(
     select(User).filter_by(name="spongebob", fullname="Spongebob Squarepants")
 )
 
+# explicit FROM clauses and JOINs
+print(select(user_table.c.name))
+print(select(user_table.c.name, address_table.c.email_address))
+
+# two ways are available to join the previous two tables:
+
+# Select.join_from() allows to indicate the left and right side of the JOIN
+print(
+    select(user_table.c.name, address_table.c.email_address).join_from(
+        user_table, address_table
+    )
+)
+
+# Select.join() indicates only the right side of the JOIN
+print(
+    select(user_table.c.name, address_table.c.email_address)
+    .join(address_table)
+)
+
+# Select.select_from()
+print(
+    select(address_table.c.email_address)
+    .select_from(user_table).join(address_table)
+)
+
+# to SELECT from the common SQL expression COUNT(), use a SQLAlchemy element
+# known as `sqlalchemy.sql.expression.func` to produce the SQL COUNT() function
+from sqlalchemy import func
+print(select(func.count("*")).select_from(user_table))
