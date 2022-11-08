@@ -605,3 +605,27 @@ subq = (
 with engine.connect() as conn:
     result = conn.execute(select(user_table.c.name).where(~subq))
     print(result.all())
+
+# working with SQL functions
+
+# the count() function, an aggregate function which counts how many rows 
+print(select(func.count()).select_from(user_table))
+
+# the lower() function, a string function that converts a string to lower case
+print(select(func.lower("A String WITH Much UPPERCASE")))
+
+# the now() function, provides current date and time
+stmt = select(func.now())
+with engine.connect() as conn:
+    result = conn.execute(stmt)
+    print(result.all())
+
+# func tries to be as liberal as possible in what it accepts.
+
+print(select(func.some_crazy_function(user_table.c.name, 17)))
+
+from sqlalchemy.dialects import postgresql
+print(select(func.now()).compile(dialect=postgresql.dialect()))
+
+from sqlalchemy.dialects import oracle
+print(select(func.now()).compile(dialect=oracle.dialect()))
