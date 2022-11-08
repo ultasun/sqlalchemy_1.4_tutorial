@@ -197,7 +197,8 @@ with engine.connect() as conn:
         insert(user_table),
         [
             {"name": "sandy", "fullname": "Sandy Cheeks"},
-            {"name": "patrick", "fullname": "Patrick Star"}
+            {"name": "patrick", "fullname": "Patrick Star"},
+            {"name": "squidward", "fullname": "Squidward T"}
         ]
     )
     conn.commit()
@@ -211,13 +212,14 @@ insert_stmt = insert(address_table).from_select(
 print(insert_stmt)
 
 # insert ... returning
-insert_stmt = insert(address_table).returning(address_table.c.id, address_table.c.email_address)
+insert_stmt = insert(address_table).returning(
+    address_table.c.id, address_table.c.email_address)
 print(insert_stmt)
 
 select_stmt = select(user_table.c.id, user_table.c.name + "@aol.com")
 insert_stmt = insert(address_table).from_select(
-    ["user_id", "email_address"], select_stmt
-    )
+    ["user_id", "email_address"], select_stmt)
+
 print(insert_stmt.returning(address_table.c.id, address_table.c.email_address))
 
 # -----------------------------------------------------------------------------
@@ -443,7 +445,7 @@ stmt = select(user_table.c.name, user_table.c.fullname, subq.c.count).join_from(
 print(stmt)
 
 # ORM entity subqueries/CTEs
-subq = select(Address).where(~Address.email_address.like("%aol.com")).subquery()
+subq = select(Address).where(~Address.email_address.like("%.net")).subquery()
 address_subq = aliased(Address, subq)
 stmt = (
     select(User, address_subq)
@@ -455,7 +457,7 @@ with Session(engine) as session:
         print(f"{user} {address}")
 
 # same goal as above, using CTE to achieve
-cte_obj = select(Address).where(~Address.email_address.like("%aol.com")).cte()
+cte_obj = select(Address).where(~Address.email_address.like("%.net")).cte()
 address_cte = aliased(Address, cte_obj)
 stmt = (
     select(User, address_cte)
@@ -512,6 +514,7 @@ with engine.connect() as conn:
     print(result.all())
 
 # LATERAL correlation
+print("LATERAL correlation")
 subq = (
     select(
         func.count(address_table.c.id).label("address_count"),
