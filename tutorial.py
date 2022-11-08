@@ -631,9 +631,22 @@ from sqlalchemy.dialects import oracle
 print(select(func.now()).compile(dialect=oracle.dialect()))
 
 # functions have return types
-#func.now().type
+func.now().type
 from sqlalchemy import JSON
 function_expr = func.json_object('{a, 1, b, "def", c, 3.5}', type_=JSON)
 
 stmt = select(function_expr["def"])
 print(stmt)
+
+# built-in functions have pre-configured return types
+m1 = func.max(Column("some_int", Integer))
+m1.type
+m2 = func.max(Column("some_str", String))
+m2.type
+func.now().type
+func.current_date().type
+func.concat("x", "y").type
+func.upper("lowercase").type
+print(select(func.upper("lowercase") + " suffix"))
+func.count().type
+func.json_object('{"a", "b"}').type
