@@ -465,3 +465,48 @@ stmt = (
 with Session(engine) as session:
     for user, address in session.execute(stmt):
         print(f"{user} {address}")
+
+# scalar and correlated subqueries
+subq = (
+    select(func.count(address_table.c.id))
+    .where(user_table.c.id == address_table.c.user_id)
+    .scalar_subquery()
+)
+print(subq)
+print(subq == 5)
+stmt = select(user_table.c.name, subq.label("address_count"))
+print(stmt)
+
+stmt = (
+    select(
+        user_table.c.name, address_table.c.email_address, subq.label("address_count")
+    )
+    .join_from(user_table, address_table)
+    .order_by(user_table.c.id, address_table.c.id)
+)
+try: # this next statement will fail because the statement is too ambiguous
+    print(stmt)
+except:
+    pass
+
+# a more specific query
+subq = (
+    select(func.count(address_table.c.id))
+    .where(user_table.c.id == address_table.c.user_id)
+    .scalar_subquery()
+    .correlate(user_table)
+)
+
+# no more ambiguity,
+# the statement then can return the data for this column like any other:
+with engine.connect() as conn:
+    result = conn.execute(
+        select(
+            user_table.c.name,
+            address_table.c.email_address,
+            subq.label("address_count"),
+        )
+        .join_from(user_table, address_table)
+        .order_by(user_table.c.id, address_table.c.id)
+    )
+    print(result.all())
