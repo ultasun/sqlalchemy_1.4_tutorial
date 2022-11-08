@@ -527,3 +527,24 @@ stmt = (
     .order_by(user_table.c.id, subq.c.email_address)
 )
 print(stmt)
+
+# UNION, UNION ALL and other set operations
+from sqlalchemy import union_all
+stmt1 = select(user_table).where(user_table.c.name == "sandy")
+stmt2 = select(user_table).where(user_table.c.name == "spongebob")
+u = union_all(stmt1, stmt2)
+with engine.connect() as conn:
+    result = conn.execute(u)
+    print(result.all())
+
+u_subq = u.subquery()
+stmt = (
+    select(u_subq.c.name, address_table.c.email_address)
+    .join_from(address_table, u_subq)
+    .order_by(u_subq.c.name, address_table.c.email_address)
+)
+with engine.connect() as conn:
+    result = conn.execute(stmt)
+    print(result.all())
+    # nothing is printed, the result is empty
+    # the result is supposed to show all the  emails for sandy and spongebob
