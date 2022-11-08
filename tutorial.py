@@ -685,3 +685,26 @@ with engine.connect() as conn:
 
 # FunctionElement.over() only applies to SQL aggregate functions. SQLAlchemy
 # will emit it, but the database could reject the expression if used incorrectly
+
+# special modifiers WITHIN GROUP, FILTER
+
+print(
+    func.unnest(
+        func.percentile_disc([0.25, 0.5, 0.75, 1]).within_group(user_table.c.name)
+    )
+)
+
+stmt = (
+    select(
+        func.count(address_table.c.email_address).filter(user_table.c.name == "sandy"),
+        func.count(address_table.c.email_address).filter(
+            user_table.c.name == "spongebob"
+        ),
+    )
+    .select_from(user_table)
+    .join(address_table)
+)
+
+with engine.connect() as conn:
+    result = conn.execute(stmt)
+    print(result.all())
