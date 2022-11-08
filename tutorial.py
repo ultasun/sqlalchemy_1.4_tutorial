@@ -714,3 +714,12 @@ stmt = select(onetwothree).where(onetwothree.c.value.in_(["two", "three"]))
 with engine.connect() as conn:
     result = conn.execute(stmt)
     result.all()
+
+# column valued functions - table valued function as a scalar column
+from sqlalchemy import select, func
+stmt = select(func.json_array_elements('["one", "two"').column_valued("x"))
+print(stmt)
+
+from sqlalchemy.dialects import oracle
+stmt = select(func.scalar_strings(5).column_valued("s"))
+print(stmt.compile(dialect=oracle.dialect()))
