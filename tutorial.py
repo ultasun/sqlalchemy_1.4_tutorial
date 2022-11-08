@@ -510,3 +510,20 @@ with engine.connect() as conn:
         .order_by(user_table.c.id, address_table.c.id)
     )
     print(result.all())
+
+# LATERAL correlation
+subq = (
+    select(
+        func.count(address_table.c.id).label("address_count"),
+        address_table.c.email_address,
+        address_table.c.user_id,
+    )
+    .where(user_table.c.id == address_table.c.user_id)
+    .lateral()
+)
+stmt = (
+    select(user_table.c.name, subq.c.address_count, subq.c.email_address)
+    .join_from(user_table, subq)
+    .order_by(user_table.c.id, subq.c.email_address)
+)
+print(stmt)
