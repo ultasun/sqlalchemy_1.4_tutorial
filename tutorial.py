@@ -586,4 +586,22 @@ with Session(engine) as session:
     for obj in session.execute(orm_stmt).scalars():
         print(obj)
 
+# EXISTS subqueries
+subq = (
+    select(func.count(address_table.c.id))
+    .where(user_table.c.id == address_table.c.user_id)
+    .group_by(address_table.c.user_id)
+    .having(func.count(address_table.c.id) > 1)
+).exists()
+with engine.connect() as conn:
+    result = conn.execute(select(user_table.c.name).where(subq))
+    print(result.all())
+# NOT EXISTS
+subq = (
+    select(address_table.c.id).where(
+        user_table.c.id == address_table.c.user_id)
+).exists()
 
+with engine.connect() as conn:
+    result = conn.execute(select(user_table.c.name).where(~subq))
+    print(result.all())
