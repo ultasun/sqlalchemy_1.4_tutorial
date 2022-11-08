@@ -650,3 +650,38 @@ func.upper("lowercase").type
 print(select(func.upper("lowercase") + " suffix"))
 func.count().type
 func.json_object('{"a", "b"}').type
+
+# advanced sql function techniques
+
+# using window functions
+stmt = (
+    select(
+        func.row_number().over(partition_by=user_table.c.name),
+        user_table.c.name,
+        address_table.c.email_address,
+    )
+    .select_from(user_table)
+    .join(address_table)
+)
+with engine.connect() as conn:
+    result = conn.execute(stmt)
+    print(result.all())
+
+# above, the partition_by parameter is used so that the 'PARTITION BY' clause
+# is rendered within the 'OVER' clause; we also may make use of the 'ORDER BY'
+# clause using order_by:
+stmt = (
+    select(
+        func.count().over(order_by=user_table.c.name),
+        user_table.c.name,
+        address_table.c.email_address,
+    )
+    .select_from(user_table)
+    .join(address_table)
+)
+with engine.connect() as conn:
+    result = conn.execute(stmt)
+    print(result.all())
+
+# FunctionElement.over() only applies to SQL aggregate functions. SQLAlchemy
+# will emit it, but the database could reject the expression if used incorrectly
