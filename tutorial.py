@@ -629,3 +629,11 @@ print(select(func.now()).compile(dialect=postgresql.dialect()))
 
 from sqlalchemy.dialects import oracle
 print(select(func.now()).compile(dialect=oracle.dialect()))
+
+# functions have return types
+#func.now().type
+from sqlalchemy import JSON
+function_expr = func.json_object('{a, 1, b, "def", c, 3.5}', type_=JSON)
+
+stmt = select(function_expr["def"])
+print(stmt)
