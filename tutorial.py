@@ -570,3 +570,20 @@ with engine.connect() as conn:
     result = conn.execute(stmt)
     print(result.all())
 
+# selecting ORM entities from Unions
+stmt1 = select(User).where(User.name == "sandy")
+stmt2 = select(User).where(User.name == "spongebob")
+u = union_all(stmt1, stmt2)
+
+orm_stmt = select(User).from_statement(u)
+with Session(engine) as session:
+    for obj in session.execute(orm_stmt).scalars():
+        print(obj)
+
+user_alias = aliased(User, u.subquery())
+orm_stmt = select(user_alias).order_by(user_alias.id)
+with Session(engine) as session:
+    for obj in session.execute(orm_stmt).scalars():
+        print(obj)
+
+
