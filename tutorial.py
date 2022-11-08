@@ -708,3 +708,9 @@ stmt = (
 with engine.connect() as conn:
     result = conn.execute(stmt)
     print(result.all())
+
+onetwothree = func.json_each('["one", "two", "three"]').table_valued("value")
+stmt = select(onetwothree).where(onetwothree.c.value.in_(["two", "three"]))
+with engine.connect() as conn:
+    result = conn.execute(stmt)
+    result.all()
