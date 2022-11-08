@@ -203,7 +203,27 @@ with engine.connect() as conn:
     )
     conn.commit()
 
-# ... skipping the 'Deep Alchemy' section
+# slightly deeper alchemy
+from sqlalchemy import select, bindparam
+scalar_subq = (
+    select(user_table.c.id)
+    .where(user_table.c.name == bindparam("username"))
+    .scalar_subquery()
+)
+
+with engine.connect() as conn:
+    result = conn.execute(
+        insert(address_table).values(user_id=scalar_subq),
+        [
+            {"username": "spongebob",
+             "email_address": "spongebob@bikinibottom.net"},
+            {"username": "sandy",
+             "email_address": "sandy@bikinibottom.net"},
+            {"username": "sandy",
+             "email_address": "sandy@squirrelpower.org"}
+        ],
+    )
+    conn.commit()
 
 # insert ... from select
 select_stmt = select(user_table.c.id, user_table.c.name + "@aol.com")
@@ -549,5 +569,4 @@ stmt = (
 with engine.connect() as conn:
     result = conn.execute(stmt)
     print(result.all())
-    # nothing is printed, the result is empty
-    # the result is supposed to show all the  emails for sandy and spongebob
+
