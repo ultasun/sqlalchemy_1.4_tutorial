@@ -862,3 +862,22 @@ print(delete_stmt)
 # this section will build out the lifecycle of the Session and how it interacts
 # with these constructs
 
+# inserting rows with the ORM
+
+# instruct the Session object to emit INSERT statements by adding objects to it
+
+# instances of classes represent rows
+squidward = User(name="squidward", fullname="Squidward Tentacles")
+krabs = User(name="ehkrabs", fullname="Eugene H. Krabs")
+
+# adding objects to a session, remember to close this session later
+session = Session(engine)
+session.add(squidward)
+session.add(krabs)
+session.new # shows pending objects
+
+# flushing
+# the session makes use of a pattern known as unit of work -- accumulating
+# changes one at a time, but does not actually communicate them to the database
+# until it is needed.
+session.flush()
