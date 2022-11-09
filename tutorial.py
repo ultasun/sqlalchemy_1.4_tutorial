@@ -810,6 +810,9 @@ update_stmt = (
 )
 from sqlalchemy.dialects import mysql
 print(update_stmt.compile(dialect=mysql.dialect()))
-
-
-        
+      
+# parameter ordered updates
+update_stmt = update(some_table).ordered_values(
+    (some_table.c.y, 20), (some_table.c.x, some_table.c.y + 10)
+)
+print(update_stmt)
