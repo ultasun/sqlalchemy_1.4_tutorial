@@ -816,3 +816,16 @@ update_stmt = update(some_table).ordered_values(
     (some_table.c.y, 20), (some_table.c.x, some_table.c.y + 10)
 )
 print(update_stmt)
+
+# the delete() SQL expression construct
+from sqlalchemy import delete
+stmt = delete(user_table).where(user_table.c.name == "patrick")
+print(stmt)
+
+delete_stmt = (
+    delete(user_table)
+    .where(user_table.c.id == address_table.c.user_id)
+    .where(address_table.c.email_address == "patrick@aol.com")
+)
+from sqlalchemy.dialects import mysql
+print(delete_stmt.compile(dialect=mysql.dialect()))
