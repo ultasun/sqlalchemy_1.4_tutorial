@@ -784,3 +784,32 @@ scalar_subq = (
 )
 update_stmt = update(user_table).values(fullname=scalar_subq)
 print(update_stmt)
+
+# UPDATE..FROM
+# sqlalchemy automatically determines FROM clauses for postgres/mysql
+update_stmt = (
+    update(user_table)
+    .where(user_table.c.id == address_table.c.user_id)
+    .where(address_table.c.email_address == "patrick@aol.com")
+    .values(fullname="Pat")
+)
+print(update_stmt)
+
+# there is a mysql specific syntax to update multiple tables
+# (what happens if not using mysql?)
+update_stmt = (
+    update(user_table)
+    .where(user_table.c.id == address_table.c.user_id)
+    .where(address_table.c.email_address == "patrick@aol.com")
+    .values(
+        {
+            user_table.c.fullname: "Patrix",
+            address_table.c.email_address: "patrick@bikinibottom.net"
+        }
+    )
+)
+from sqlalchemy.dialects import mysql
+print(update_stmt.compile(dialect=mysql.dialect()))
+
+
+        
