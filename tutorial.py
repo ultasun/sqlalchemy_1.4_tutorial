@@ -742,3 +742,35 @@ from sqlalchemy import type_coerce
 from sqlalchemy.dialects import mysql
 s = select(type_coerce({"some_key": {"foo": "bar"}}, JSON)["some_key"])
 print(s.compile(dialect=mysql.dialect()))
+
+# updating and deleting rows with core
+
+# the update() SQL expression construct
+from sqlalchemy import update
+stmt = (
+    update(user_table)
+    .where(user_table.c.name == "patrick")
+    .values(fullname="Patrick Star")
+)
+print(stmt)
+
+stmt = update(user_table).values(fullname="Username: " + user_table.c.name)
+print(stmt)
+
+# supporting updates in an 'executemany' context
+from sqlalchemy import bindparam
+stmt = (
+    update(user_table)
+    .where(user_table.c.name == bindparam("oldname"))
+    .values(name=bindparam("newname"))
+)
+with engine.begin() as conn:
+    conn.execute(
+        stmt,
+        [
+            {"oldname": "jack", "newname": "ed"},
+            {"oldname": "wendy", "newname": "mary"},
+            {"oldname": "jim", "newname": "james"},
+        ],
+    )
+
