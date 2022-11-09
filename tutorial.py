@@ -855,3 +855,10 @@ delete_stmt = (
     .returning(user_table.c.id, user_table.c.name)
 )
 print(delete_stmt)
+
+# -----------------------------------------------------------------------------
+# data manipulation with the ORM
+
+# this section will build out the lifecycle of the Session and how it interacts
+# with these constructs
+
