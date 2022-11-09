@@ -822,6 +822,7 @@ from sqlalchemy import delete
 stmt = delete(user_table).where(user_table.c.name == "patrick")
 print(stmt)
 
+# multiple table deletes
 delete_stmt = (
     delete(user_table)
     .where(user_table.c.id == address_table.c.user_id)
