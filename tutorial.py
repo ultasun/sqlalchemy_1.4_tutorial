@@ -723,3 +723,22 @@ print(stmt)
 from sqlalchemy.dialects import oracle
 stmt = select(func.scalar_strings(5).column_valued("s"))
 print(stmt.compile(dialect=oracle.dialect()))
+
+# data casts and type coercion
+from sqlalchemy import cast
+stmt = select(cast(user_table.c.id, String))
+with engine.connect() as conn:
+    result = conn.execute(stmt)
+    result.all()
+
+from sqlalchemy import JSON
+print(cast("{'a': 'b'}", JSON)["a"])
+
+# type_coerce() - a Python-only "cast"
+
+import json
+from sqlalchemy import JSON
+from sqlalchemy import type_coerce
+from sqlalchemy.dialects import mysql
+s = select(type_coerce({"some_key": {"foo": "bar"}}, JSON)["some_key"])
+print(s.compile(dialect=mysql.dialect()))
