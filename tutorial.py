@@ -830,3 +830,28 @@ delete_stmt = (
 )
 from sqlalchemy.dialects import mysql
 print(delete_stmt.compile(dialect=mysql.dialect()))
+
+# getting affected row count from UPDATE, DELETE
+with engine.begin() as conn:
+    result = conn.execute(
+        update(user_table)
+        .values(fullname="Patrick McStar")
+        .where(user_table.c.name == "patrick")
+    )
+    print(result.rowcount)
+
+# using RETURNING with UPDATE, DELETE
+update_stmt = (
+    update(user_table)
+    .where(user_table.c.name == "patrick")
+    .values(fullname="Patrick MuhStar")
+    .returning(user_table.c.id, user_table.c.name)
+)
+print(update_stmt)
+
+delete_stmt = (
+    delete(user_table)
+    .where(user_table.c.name == "patrick")
+    .returning(user_table.c.id, user_table.c.name)
+)
+print(delete_stmt)
