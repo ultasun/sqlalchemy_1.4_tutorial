@@ -966,6 +966,7 @@ squidward.name
 
 # -----------------------------------------------------------------------------
 # Working with related objects
+# https://docs.sqlalchemy.org/en/14/tutorial/orm_related_objects.html#working-with-related-objects
 
 u1 = User(name="pkrabs", fullname="Pearl Krabs")
 u1.addresses
