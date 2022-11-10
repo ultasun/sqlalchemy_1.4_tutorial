@@ -963,3 +963,7 @@ except DetachedInstanceError:
 # detatched objects can be set with the same, or new Session using add()
 session.add(squidward)
 squidward.name
+
+# -----------------------------------------------------------------------------
+
+# Working with related objects
