@@ -991,3 +991,10 @@ print(u1.id)
 print(a1.user_id)
 
 session.commit()
+
+# loading relationships
+u1.id
+
+u1.addresses
+a1
+a2
