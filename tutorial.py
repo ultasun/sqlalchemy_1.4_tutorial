@@ -950,3 +950,16 @@ sandy.fullname
 patrick in session
 session.execute(select(User).where(User.name == "patrick")).scalar_one() is patrick
 
+# closing a session
+session.close()
+
+# the characters are now in a detatched state
+from sqlalchemy.orm.exc import DetachedInstanceError
+try:
+    squidward.name
+except DetachedInstanceError:
+    print("squidward is detatched from the session.")
+
+# detatched objects can be set with the same, or new Session using add()
+session.add(squidward)
+squidward.name
