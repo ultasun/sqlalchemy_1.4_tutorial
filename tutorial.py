@@ -931,3 +931,22 @@ squidward = session.get(User, 4)
 session.execute(delete(User).where(User.name == "squidward"))
 
 squidward in session
+
+# rolling back
+
+# rolling back will emit a ROLLBACK on the SQL connection in progress, and will
+# expire all objects currently associated with this Session -- they will refresh
+# themselves when next accessed via lazy-loading
+
+session.rollback()
+
+# examining the sandy.__dict__ will show nearly no state compared to before
+
+sandy.fullname
+
+# examining the sandy.__dict__ object shows the fields fresh from the DBMS
+
+# patrick is back too
+patrick in session
+session.execute(select(User).where(User.name == "patrick")).scalar_one() is patrick
+
