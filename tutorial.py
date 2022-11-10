@@ -915,3 +915,12 @@ sandy in session.dirty
 sandy_fullname = session.execute(select(User.fullname).where(User.id == 2)).scalar_one()
 print(sandy_fullname)
 
+# deleting ORM objects
+
+# "Let’s load up patrick from the database:"
+patrick = session.get(User, 3)
+session.delete(patrick)
+# deletion occurs after the flush/commit, automatic before next query
+session.execute(select(User).where(User.name == "patrick")).first()
+
+patrick in session
