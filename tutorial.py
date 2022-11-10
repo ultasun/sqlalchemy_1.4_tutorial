@@ -980,3 +980,14 @@ a1.user
 a2 = Address(email_address="pearl@bikinibottom.net", user=u1)
 u1.addresses
 a2.user = u1
+
+# cascading objects into the session
+session.add(u1)
+u1 in session
+a1 in session
+a2 in session
+
+print(u1.id)
+print(a1.user_id)
+
+session.commit()
