@@ -904,3 +904,14 @@ some_squidward is squidward
 
 # committing
 session.commit()
+
+# updating ORM objects
+sandy = session.execute(select(User).filter_by(name="sandy")).scalar_one()
+
+sandy
+sandy.fullname
+sandy in session.dirty
+
+sandy_fullname = session.execute(select(User.fullname).where(User.id == 2)).scalar_one()
+print(sandy_fullname)
+
