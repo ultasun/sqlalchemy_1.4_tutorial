@@ -893,3 +893,14 @@ krabs.id
 #
 # Some database backends such as psycopg2 can also INSERT many rows at once
 # while still being able to retrieve the primary key values.
+
+# getting objects by primary key from the identity map
+some_squidward = session.get(User, 4)
+
+# the identity map is a critical feature that allows complex sets of objects to
+# be manipulated within a transaction without things getting out of sync.
+
+some_squidward is squidward
+
+# committing
+session.commit()
