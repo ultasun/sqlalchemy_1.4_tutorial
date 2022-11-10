@@ -965,5 +965,17 @@ session.add(squidward)
 squidward.name
 
 # -----------------------------------------------------------------------------
-
 # Working with related objects
+
+u1 = User(name="pkrabs", fullname="Pearl Krabs")
+u1.addresses
+
+a1 = Address(email_address="pearl.krabs@bikinibottom.net")
+u1.addresses.append(a1)
+
+u1.addresses
+
+a1.user
+a2 = Address(email_address="pearl@bikinibottom.net", user=u1)
+u1.addresses
+a2.user = u1
