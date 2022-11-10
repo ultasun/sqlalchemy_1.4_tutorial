@@ -924,3 +924,10 @@ session.delete(patrick)
 session.execute(select(User).where(User.name == "patrick")).first()
 
 patrick in session
+
+# ORM-enabled DELETE statements
+
+squidward = session.get(User, 4)
+session.execute(delete(User).where(User.name == "squidward"))
+
+squidward in session
