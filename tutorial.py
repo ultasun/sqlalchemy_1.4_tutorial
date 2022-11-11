@@ -1017,3 +1017,9 @@ print(
 
 user_alias_1 = aliased(User)
 print(select(user_alias_1.name).join(user_alias_1.addresses))
+
+# augmenting the ON Criteria
+stmt = select(User.fullname).join(
+    User.addresses.and_(Address.email_address == "pearl.krabs@bikinibottom.net")
+)
+session.execute(stmt).all()
