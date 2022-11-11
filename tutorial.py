@@ -998,3 +998,10 @@ u1.id
 u1.addresses
 a1
 a2
+
+# using relationships in queries
+
+# using relationships to join
+print(select(Address.email_address).select_from(User).join(User.addresses))
+
+print(select(Address.email_address).join_from(User, Address))
