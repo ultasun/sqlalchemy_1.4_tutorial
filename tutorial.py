@@ -1023,3 +1023,15 @@ stmt = select(User.fullname).join(
     User.addresses.and_(Address.email_address == "pearl.krabs@bikinibottom.net")
 )
 session.execute(stmt).all()
+
+# EXISTS forms: has() / any()
+stmt = select(User.fullname).where(
+    User.addresses.any(Address.email_address == "pearl.krabs@bikinibottom.net")
+)
+session.execute(stmt).all()
+
+stmt = select(User.fullname).where(~User.addresses.any())
+session.execute(stmt).all()
+
+stmt = select(Address.email_address).where(Address.user.has(User.name == "pkrabs"))
+session.execute(stmt).all()
