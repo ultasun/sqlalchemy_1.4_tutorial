@@ -1005,3 +1005,15 @@ a2
 print(select(Address.email_address).select_from(User).join(User.addresses))
 
 print(select(Address.email_address).join_from(User, Address))
+
+# joining between Aliased targets
+print(
+    select(User)
+    .join(User.addresses.of_type(address_alias_1))
+    .where(address_alias_1.email_address == "patrick@bikinibottom.net")
+    .join(User.addresses.of_type(address_alias_2))
+    .where(address_alias_2.email_address == "patrick@aol.com")
+)
+
+user_alias_1 = aliased(User)
+print(select(user_alias_1.name).join(user_alias_1.addresses))
